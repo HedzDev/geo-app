@@ -49,8 +49,16 @@ export default function HomeScreen() {
         const continent = country.continents[0];
         const official = country.name.official;
         const capital = country.capital;
-        const currency = Object.values(country.currencies);
-        const language = Object.values(country.languages);
+
+        const currency =
+          country.currencies === undefined
+            ? ''
+            : Object.values(country.currencies);
+        const language =
+          country.languages === undefined
+            ? ''
+            : Object.values(country.languages);
+
         const area = country.area;
         const population = country.population;
 
@@ -60,8 +68,12 @@ export default function HomeScreen() {
           continent: continent,
           official: official,
           capital: capital,
-          currency: currency[0].name,
-          language: language[0],
+          currency:
+            typeof currency === 'string'
+              ? 'No locale currencies'
+              : currency[0].name,
+          language:
+            typeof language === 'string' ? 'No locale language' : language[0],
           area: area.toLocaleString(),
           population: population,
         };
