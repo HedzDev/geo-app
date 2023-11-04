@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import PressedCountry from '../components/PressedCountry';
+import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -111,10 +112,10 @@ export default function HomeScreen() {
         shadowColor: 'red',
         shadowOffset: {
           width: 0,
-          height: 5,
+          height: 3,
         },
-        shadowOpacity: 0.75,
-        shadowRadius: 6,
+        shadowOpacity: 0.95,
+        shadowRadius: 5,
       };
     }
 
@@ -138,7 +139,11 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>GEO APP</Text>
+      <LinearGradient
+        colors={['rgb(74,98,92)', 'rgb(18,25,22)']}
+        style={styles.background}
+      />
+      <Text style={styles.title}>Geopedia</Text>
 
       <Modal
         visible={modalVisible}
@@ -168,13 +173,28 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  background: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    height: '200%',
+  },
   title: {
-    fontSize: 30,
+    fontSize: 40,
     fontFamily: 'Ubuntu_400Regular',
+    color: '#6aaf92',
+    shadowColor: '#7C5F6B',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.95,
+    shadowRadius: 2,
+    elevation: 5,
   },
   centeredView: {
     flex: 1,
@@ -200,6 +220,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     marginTop: 130,
+    marginBottom: 30,
     margin: -1,
   },
   countriesContainer: {
@@ -208,7 +229,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   countryCard: {
-    backgroundColor: '#fdfdfd',
+    backgroundColor: '#e2e6e2',
     height: 140,
     borderRadius: 10,
     shadowColor: '#000',

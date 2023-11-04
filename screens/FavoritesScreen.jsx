@@ -1,4 +1,5 @@
 import { Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import FavoriteCard from '../components/FavoriteCard';
 import { useSelector } from 'react-redux';
 import React from 'react';
@@ -14,13 +15,21 @@ export default function FavoritesScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>GEO APP</Text>
+      <LinearGradient
+        colors={['rgb(74,98,92)', 'rgb(18,25,22)']}
+        style={styles.background}
+      />
+      <Text style={styles.title}>Geopedia</Text>
 
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.countriesContainer}
       >
-        {countries}
+        {favorites.length > 0 ? (
+          countries
+        ) : (
+          <Text style={styles.infoText}>No favorites countries yet 😀 !</Text>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -29,18 +38,52 @@ export default function FavoritesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'rgb(153,173,165)',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  background: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    height: '200%',
+  },
   title: {
-    fontSize: 30,
+    fontSize: 40,
+    fontFamily: 'Ubuntu_400Regular',
+    color: '#6aaf92',
+    shadowColor: '#7C5F6B',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.95,
+    shadowRadius: 2,
+    elevation: 5,
   },
   scrollView: {
     marginTop: 15,
-    width: '95%',
+    width: '100%',
   },
   countriesContainer: {
     alignItems: 'center',
+  },
+  infoText: {
+    marginTop: '60%',
+    fontSize: 25,
+    fontFamily: 'Ubuntu_400Regular',
+    color: '#95e5c4',
+    shadowColor: '#fff',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.95,
+    shadowRadius: 2,
+    elevation: 5,
+    borderWidth: 2,
+    padding: 10,
+    borderColor: 'rgb(205,152,132)',
   },
 });

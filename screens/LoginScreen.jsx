@@ -19,13 +19,13 @@ export default function LoginScreen({ navigation }) {
   }
   return (
     <ImageBackground style={styles.background} source={image}>
-      <Text style={styles.text}>Do you want to discover Geo App?</Text>
+      <Text style={styles.text}>Geopedia</Text>
       <TouchableOpacity
         activeOpacity={0.6}
         style={styles.button}
         onPress={() => navigation.navigate('TabNavigator')}
       >
-        <Text style={styles.buttonText}>Click Here</Text>
+        <Text style={styles.buttonText}>Click to Discover</Text>
       </TouchableOpacity>
     </ImageBackground>
   );
@@ -38,7 +38,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   text: {
-    color: '#fff',
+    color: 'rgb(205,152,132)',
+    textShadowColor: '#fff',
+    textShadowRadius: 2,
+    textShadowOffset: {
+      width: 1,
+      height: 3,
+    },
     fontSize: 50,
     textAlign: 'center',
     marginBottom: 30,
