@@ -97,10 +97,12 @@ const styles = StyleSheet.create({
   pressedCountryTitle: {
     fontSize: 40,
     textAlign: 'center',
+    fontFamily: 'Ubuntu_400Regular',
   },
   pressedCountryText: {
     fontSize: 20,
     marginVertical: 5,
+    fontFamily: 'Ubuntu_400Regular',
   },
   pressedCountryInfoBlock: {
     marginTop: 60,
@@ -112,6 +114,7 @@ const styles = StyleSheet.create({
   pressedCountryOfficial: {
     textAlign: 'center',
     paddingTop: 7,
+    fontFamily: 'Ubuntu_400Regular',
   },
   like: {
     color: 'red',
@@ -121,5 +124,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 19,
     fontSize: 20,
+    fontFamily: 'Ubuntu_400Regular',
   },
 });

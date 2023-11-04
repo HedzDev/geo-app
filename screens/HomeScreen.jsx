@@ -166,6 +166,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 30,
+    fontFamily: 'Ubuntu_400Regular',
   },
   centeredView: {
     flex: 1,
@@ -221,5 +222,6 @@ const styles = StyleSheet.create({
   countryName: {
     textAlign: 'center',
     paddingVertical: 10,
+    fontFamily: 'Ubuntu_400Regular',
   },
 });
