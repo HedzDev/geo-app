@@ -8,12 +8,18 @@ import {
   Modal,
   TouchableOpacity,
 } from 'react-native';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import { useDispatch, useSelector } from 'react-redux';
+import { addFavorite } from '../reducers/favorites';
 import React, { useEffect, useState } from 'react';
 
 export default function HomeScreen() {
+  const favorites = useSelector((state) => state.favorites.value);
+  const dispatch = useDispatch();
   const [allCountries, setAllCountries] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [pressedCountry, setPressedCountry] = useState([]);
+  const [isLiked, setIsLiked] = useState(false);
 
   // Function who fetch API and converts data to JSON
   const getJSON = async (url, errorMsg = 'Something went wrong...') => {
@@ -85,6 +91,11 @@ export default function HomeScreen() {
     }
   };
 
+  const closeModal = () => {
+    setModalVisible(false);
+    setIsLiked(false);
+  };
+
   // Displaying all the countries
   const countries = allCountries.map((country, i) => {
     const name = country.name;
@@ -94,10 +105,15 @@ export default function HomeScreen() {
         : country.name;
     const image = country.flag;
 
+    let favoBorderStyle = {};
+    if (favorites.some((el) => name === el.name)) {
+      favoBorderStyle = { borderWidth: 1, borderColor: 'red' };
+    }
+
     return (
       <TouchableOpacity
         key={i}
-        style={styles.countryCard}
+        style={[styles.countryCard, favoBorderStyle]}
         onPress={() => fetchCountryData(name)}
       >
         <Text style={styles.countryName}>{formattedName}</Text>
@@ -105,6 +121,12 @@ export default function HomeScreen() {
       </TouchableOpacity>
     );
   });
+
+  // Adding country to favorites
+  const handleFavorite = (data) => {
+    dispatch(addFavorite(data));
+    setIsLiked(true);
+  };
 
   // Displaying pressed country
   const country = pressedCountry.map((el, i) => {
@@ -119,6 +141,13 @@ export default function HomeScreen() {
       name,
       flag,
     } = el;
+
+    let heartIcon = '';
+    if (favorites.some((country) => name === country.name)) {
+      heartIcon = 'heart';
+    } else {
+      heartIcon = 'heart-o';
+    }
 
     return (
       <View key={i} style={styles.pressedCountryCard}>
@@ -149,6 +178,10 @@ export default function HomeScreen() {
             millions people
           </Text>
         </View>
+        <TouchableOpacity onPress={() => handleFavorite(el)}>
+          <FontAwesomeIcon name={heartIcon} size={40} style={styles.like} />
+        </TouchableOpacity>
+        {isLiked && <Text style={styles.likeText}>Added to favorites !</Text>}
       </View>
     );
   });
@@ -161,11 +194,11 @@ export default function HomeScreen() {
         visible={modalVisible}
         transparent={true}
         animationType="fade"
-        onRequestClose={() => setModalVisible(false)}
+        onRequestClose={() => closeModal()}
       >
         <TouchableOpacity
           style={styles.centeredView}
-          onPress={() => setModalVisible(false)}
+          onPress={() => closeModal()}
           activeOpacity={1}
         >
           <View style={styles.modalView}>{country}</View>
@@ -216,6 +249,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     marginTop: 130,
+    margin: -1,
   },
   countriesContainer: {
     flexDirection: 'row',
@@ -273,5 +307,15 @@ const styles = StyleSheet.create({
   pressedCountryOfficial: {
     textAlign: 'center',
     paddingTop: 7,
+  },
+  like: {
+    color: 'red',
+    marginTop: 60,
+  },
+  likeText: {
+    textAlign: 'center',
+    marginTop: 19,
+    color: 'red',
+    fontSize: 20,
   },
 });
