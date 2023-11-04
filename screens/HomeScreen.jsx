@@ -7,6 +7,7 @@ import {
   Image,
   Modal,
   TouchableOpacity,
+  TextInput,
 } from 'react-native';
 import PressedCountry from '../components/PressedCountry';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -17,7 +18,10 @@ export default function HomeScreen() {
   const favorites = useSelector((state) => state.favorites.value);
   const [pressedCountry, setPressedCountry] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [seekedCountry, setSeekedCountry] = useState([]);
   const [allCountries, setAllCountries] = useState([]);
+  const [inputValue, setInputValue] = useState('');
+  const [isError, setIsError] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
 
   // Function who fetch API and converts data to JSON
@@ -97,18 +101,13 @@ export default function HomeScreen() {
     setIsLiked(false);
   };
 
-  // Displaying all the countries
-  const countries = allCountries.map((country, i) => {
-    const name = country.name;
-    const formattedName =
-      country.name.length > 15
-        ? country.name.slice(0, 15) + '...'
-        : country.name;
-    const image = country.flag;
+  const formatName = (name) => {
+    return name.length > 15 ? name.slice(0, 15) + '...' : name;
+  };
 
-    let favoBorderStyle = {};
+  const getBorderStyle = (name) => {
     if (favorites.some((el) => name === el.name)) {
-      favoBorderStyle = {
+      return {
         shadowColor: 'red',
         shadowOffset: {
           width: 0,
@@ -118,6 +117,17 @@ export default function HomeScreen() {
         shadowRadius: 5,
       };
     }
+    return {};
+  };
+
+  // Displaying all the countries or seeked country
+  const countries = (
+    seekedCountry.length === 0 ? allCountries : seekedCountry
+  ).map((country, i) => {
+    const name = country.name;
+    const formattedName = formatName(name);
+    const image = country.flag;
+    const favoBorderStyle = getBorderStyle(name);
 
     return (
       <TouchableOpacity
@@ -130,6 +140,41 @@ export default function HomeScreen() {
       </TouchableOpacity>
     );
   });
+
+  // Fetch country by name
+  const handleSubmit = async (country) => {
+    try {
+      if (!inputValue || !inputValue.trim()) {
+        setIsError(true);
+        return;
+      }
+      const data = await getJSON(
+        `https://restcountries.com/v3.1/name/${country}`
+      );
+
+      if (!data) {
+        return;
+      }
+      const formattedData = data.map((country) => {
+        const name = country.name.common;
+        const flag = country.flags.png;
+        return {
+          name: name,
+          flag: flag,
+        };
+      });
+      setSeekedCountry(formattedData);
+      setInputValue('');
+      setIsError(false);
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
+  // Reset seeked country
+  const handleReset = () => {
+    setSeekedCountry([]);
+  };
 
   // Displaying pressed country
   const country = pressedCountry.map((data, i) => {
@@ -144,7 +189,6 @@ export default function HomeScreen() {
         style={styles.background}
       />
       <Text style={styles.title}>Geopedia</Text>
-
       <Modal
         visible={modalVisible}
         transparent={true}
@@ -159,6 +203,28 @@ export default function HomeScreen() {
           <View style={styles.modalView}>{country}</View>
         </TouchableOpacity>
       </Modal>
+
+      <TextInput
+        style={styles.input}
+        placeholder="Enter a country name"
+        onChangeText={(value) => setInputValue(value)}
+        value={inputValue}
+      />
+      <TouchableOpacity style={styles.inputButton}>
+        <Text style={styles.inputText} onPress={() => handleSubmit(inputValue)}>
+          Search
+        </Text>
+      </TouchableOpacity>
+      {isError && (
+        <Text style={styles.errorText}>Please Enter a Valid Country ❌</Text>
+      )}
+      {seekedCountry.length !== 0 && (
+        <TouchableOpacity style={styles.inputButton}>
+          <Text style={styles.inputText} onPress={() => handleReset()}>
+            Back to All Countries ⬅️
+          </Text>
+        </TouchableOpacity>
+      )}
 
       <ScrollView
         style={styles.scrollView}
@@ -219,7 +285,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   scrollView: {
-    marginTop: 130,
+    marginTop: 50,
     marginBottom: 30,
     margin: -1,
   },
@@ -253,5 +319,29 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingVertical: 10,
     fontFamily: 'Ubuntu_400Regular',
+  },
+  input: {
+    backgroundColor: '#e2e6e2',
+    borderRadius: 5,
+    padding: 10,
+    marginTop: 35,
+  },
+  inputButton: {
+    backgroundColor: '#e2e6e2',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  inputText: {},
+  errorText: {
+    marginTop: 3,
+    color: '#000',
+    fontSize: 17,
+    textShadowColor: 'red',
+    textShadowRadius: 3,
+    textShadowOffset: {
+      width: 2,
+      height: 1,
+    },
   },
 });
