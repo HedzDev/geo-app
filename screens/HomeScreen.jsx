@@ -8,17 +8,15 @@ import {
   Modal,
   TouchableOpacity,
 } from 'react-native';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import { useDispatch, useSelector } from 'react-redux';
-import { addFavorite } from '../reducers/favorites';
+import PressedCountry from '../components/PressedCountry';
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 export default function HomeScreen() {
   const favorites = useSelector((state) => state.favorites.value);
-  const dispatch = useDispatch();
-  const [allCountries, setAllCountries] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
   const [pressedCountry, setPressedCountry] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [allCountries, setAllCountries] = useState([]);
   const [isLiked, setIsLiked] = useState(false);
 
   // Function who fetch API and converts data to JSON
@@ -31,16 +29,20 @@ export default function HomeScreen() {
   // Fetching ALL restCountries API's countries
   useEffect(() => {
     (async () => {
-      const data = await getJSON('https://restcountries.com/v3.1/all');
-      const formattedData = data.map((country) => {
-        const name = country.name.common;
-        const flag = country.flags.png;
-        return {
-          name: name,
-          flag: flag,
-        };
-      });
-      setAllCountries(formattedData);
+      try {
+        const data = await getJSON('https://restcountries.com/v3.1/all');
+        const formattedData = data.map((country) => {
+          const name = country.name.common;
+          const flag = country.flags.png;
+          return {
+            name: name,
+            flag: flag,
+          };
+        });
+        setAllCountries(formattedData);
+      } catch (error) {
+        console.error(error.message);
+      }
     })();
   }, []);
 
@@ -50,40 +52,38 @@ export default function HomeScreen() {
       const data = await getJSON(`https://restcountries.com/v3.1/name/${name}`);
 
       const formattedData = data.map((country) => {
-        const name = country.name.common;
-        const flag = country.flags.png;
-        const continent = country.continents[0];
-        const official = country.name.official;
-        const capital = country.capital;
+        const {
+          name: { common },
+          flags: { png: flag },
+          continents: [continent],
+          name: { official },
+          capital,
+          currencies,
+          languages,
+          area,
+          population,
+        } = country;
 
-        const currency =
-          country.currencies === undefined
-            ? ''
-            : Object.values(country.currencies);
-        const language =
-          country.languages === undefined
-            ? ''
-            : Object.values(country.languages);
-
-        const area = country.area;
-        const population = country.population;
+        const currency = currencies
+          ? currencies[Object.keys(currencies)[0]].name
+          : 'No locale currencies';
+        const language = languages
+          ? Object.values(languages)[0]
+          : 'No locale language';
 
         return {
-          name: name,
-          flag: flag,
-          continent: continent,
-          official: official,
-          capital: capital,
-          currency:
-            typeof currency === 'string'
-              ? 'No locale currencies'
-              : currency[0].name,
-          language:
-            typeof language === 'string' ? 'No locale language' : language[0],
+          name: common,
+          flag,
+          continent,
+          official,
+          capital,
+          currency,
+          language,
           area: area.toLocaleString(),
-          population: population,
+          population,
         };
       });
+
       setPressedCountry(formattedData);
       setModalVisible(true);
     } catch (error) {
@@ -122,68 +122,10 @@ export default function HomeScreen() {
     );
   });
 
-  // Adding country to favorites
-  const handleFavorite = (data) => {
-    dispatch(addFavorite(data));
-    setIsLiked(true);
-  };
-
   // Displaying pressed country
-  const country = pressedCountry.map((el, i) => {
-    const {
-      currency,
-      language,
-      continent,
-      area,
-      population,
-      official,
-      capital,
-      name,
-      flag,
-    } = el;
-
-    let heartIcon = '';
-    if (favorites.some((country) => name === country.name)) {
-      heartIcon = 'heart';
-    } else {
-      heartIcon = 'heart-o';
-    }
-
-    return (
-      <View key={i} style={styles.pressedCountryCard}>
-        <Image source={{ uri: flag }} style={styles.pressedCountryFlag} />
-        <Text style={styles.pressedCountryTitle}>{name}</Text>
-        <Text style={styles.pressedCountryOfficial}>{official}</Text>
-        <View style={styles.pressedCountryInfoBlock}>
-          <Text style={styles.pressedCountryText}>
-            Capital : <Text style={styles.insideText}>{capital}</Text>
-          </Text>
-          <Text style={styles.pressedCountryText}>
-            Area : <Text style={styles.insideText}>{area} km²</Text>
-          </Text>
-          <Text style={styles.pressedCountryText}>
-            Continent : <Text style={styles.insideText}>{continent}</Text>
-          </Text>
-          <Text style={styles.pressedCountryText}>
-            💰 <Text style={styles.insideText}>{currency}</Text>
-          </Text>
-          <Text style={styles.pressedCountryText}>
-            🗣️ <Text style={styles.insideText}>{language}</Text>
-          </Text>
-          <Text style={styles.pressedCountryText}>
-            👫{' '}
-            <Text style={styles.insideText}>
-              {(+population / 1000000).toFixed(2)}
-            </Text>{' '}
-            millions people
-          </Text>
-        </View>
-        <TouchableOpacity onPress={() => handleFavorite(el)}>
-          <FontAwesomeIcon name={heartIcon} size={40} style={styles.like} />
-        </TouchableOpacity>
-        {isLiked && <Text style={styles.likeText}>Added to favorites !</Text>}
-      </View>
-    );
+  const country = pressedCountry.map((data, i) => {
+    const isFavorite = favorites.some((country) => country.name === data.name);
+    return <PressedCountry key={i} {...data} isFavorite={isFavorite} />;
   });
 
   return (
@@ -279,43 +221,5 @@ const styles = StyleSheet.create({
   countryName: {
     textAlign: 'center',
     paddingVertical: 10,
-  },
-  pressedCountryCard: {
-    alignItems: 'center',
-  },
-  pressedCountryFlag: {
-    width: 300,
-    height: 180,
-    marginBottom: 30,
-    borderWidth: 1 / 3,
-  },
-  pressedCountryTitle: {
-    fontSize: 40,
-    textAlign: 'center',
-  },
-  pressedCountryText: {
-    fontSize: 20,
-    marginVertical: 5,
-  },
-  pressedCountryInfoBlock: {
-    marginTop: 60,
-  },
-  insideText: {
-    fontWeight: 'bold',
-    color: 'rgb(205,152,132)',
-  },
-  pressedCountryOfficial: {
-    textAlign: 'center',
-    paddingTop: 7,
-  },
-  like: {
-    color: 'red',
-    marginTop: 60,
-  },
-  likeText: {
-    textAlign: 'center',
-    marginTop: 19,
-    color: 'red',
-    fontSize: 20,
   },
 });

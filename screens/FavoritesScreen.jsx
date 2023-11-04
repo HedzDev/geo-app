@@ -1,29 +1,15 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  SafeAreaView,
-} from 'react-native';
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { removeFavorite } from '../reducers/favorites';
+import { Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import FavoriteCard from '../components/FavoriteCard';
+import { useSelector } from 'react-redux';
+import React from 'react';
 
 export default function FavoritesScreen() {
-  const dispatch = useDispatch();
   const favorites = useSelector((state) => state.favorites.value);
-  console.log(favorites);
-
-  // const handleRemoveFavorite = (name) => {
-  //   dispatch(removeFavorite(name));
-  // };
 
   // Displaying favorites countries
-  const countries = favorites.map((el, i) => {
-    return <FavoriteCard key={i} {...el} />;
+  const countries = favorites.map((data, i) => {
+    const isFavorite = favorites.some((country) => country.name === data.name);
+    return <FavoriteCard key={i} {...data} isFavorite={isFavorite} />;
   });
 
   return (

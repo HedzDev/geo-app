@@ -1,8 +1,11 @@
-import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import { removeFavorite } from '../reducers/favorites';
+import { useDispatch } from 'react-redux';
+import React from 'react';
 
 export default function FavoriteCard(props) {
+  const dispatch = useDispatch();
   const {
     currency,
     language,
@@ -14,6 +17,10 @@ export default function FavoriteCard(props) {
     name,
     flag,
   } = props;
+
+  const handleRemoveFavorite = (data) => {
+    dispatch(removeFavorite(data));
+  };
 
   return (
     <View style={styles.pressedCountryCard}>
@@ -50,7 +57,7 @@ export default function FavoriteCard(props) {
           </Text>
         </View>
       </View>
-      <TouchableOpacity onPress={() => handleRemoveFavorite(name)}>
+      <TouchableOpacity onPress={() => handleRemoveFavorite(props)}>
         <FontAwesomeIcon name="heart" size={40} style={styles.like} />
       </TouchableOpacity>
     </View>
