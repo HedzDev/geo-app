@@ -107,7 +107,15 @@ export default function HomeScreen() {
 
     let favoBorderStyle = {};
     if (favorites.some((el) => name === el.name)) {
-      favoBorderStyle = { borderWidth: 1, borderColor: 'red' };
+      favoBorderStyle = {
+        shadowColor: 'red',
+        shadowOffset: {
+          width: 0,
+          height: 5,
+        },
+        shadowOpacity: 0.75,
+        shadowRadius: 6,
+      };
     }
 
     return (
@@ -201,7 +209,7 @@ const styles = StyleSheet.create({
   },
   countryCard: {
     backgroundColor: '#fdfdfd',
-    height: 200,
+    height: 140,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {
@@ -215,9 +223,10 @@ const styles = StyleSheet.create({
   },
   countryFlag: {
     width: 120,
-    height: 120,
+    height: 60,
     margin: 5,
     borderRadius: 5,
+    objectFit: 'contain',
   },
   countryName: {
     textAlign: 'center',

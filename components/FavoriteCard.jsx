@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   pressedCountryCard: {
     backgroundColor: '#fff',
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: 'red',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Ubuntu_400Regular',
   },
   pressedCountryText: {
-    fontSize: 15,
+    fontSize: 17,
     marginVertical: 5,
     fontFamily: 'Ubuntu_400Regular',
   },
