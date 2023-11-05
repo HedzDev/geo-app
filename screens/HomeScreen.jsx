@@ -8,7 +8,6 @@ import {
   Modal,
   TouchableOpacity,
   TextInput,
-  Dimensions,
 } from 'react-native';
 import PressedCountry from '../components/PressedCountry';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -23,8 +22,8 @@ export default function HomeScreen() {
   const [seekedCountry, setSeekedCountry] = useState([]);
   const [allCountries, setAllCountries] = useState([]);
   const [inputValue, setInputValue] = useState('');
-  const [isError, setIsError] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+  const [error, setError] = useState('');
 
   // Fetching ALL restCountries API's countries
   useEffect(() => {
@@ -35,8 +34,8 @@ export default function HomeScreen() {
           const name = country.name.common;
           const flag = country.flags.png;
           return {
-            name: name,
-            flag: flag,
+            name,
+            flag,
           };
         });
         setAllCountries(formattedData);
@@ -90,10 +89,10 @@ export default function HomeScreen() {
       console.error(error.message);
     }
   };
-
   const closeModal = () => {
     setModalVisible(false);
     setIsLiked(false);
+    setError('');
   };
 
   const getBorderStyle = (name) => {
@@ -108,7 +107,7 @@ export default function HomeScreen() {
         shadowRadius: 5,
       };
     }
-    return {};
+    return;
   };
 
   const formatName = (name) => {
@@ -116,32 +115,31 @@ export default function HomeScreen() {
   };
 
   // Displaying all the countries or seeked country
-  const countries = (
-    seekedCountry.length === 0 ? allCountries : seekedCountry
-  ).map((country, i) => {
-    const name = country.name;
-    const formattedName = formatName(name);
-    const image = country.flag;
-    const favoBorderStyle = getBorderStyle(name);
+  const countries = (seekedCountry.length === 0 ? allCountries : seekedCountry)
+    .sort((a, b) => new Intl.Collator().compare(a.name, b.name)) // Using Intl API to sort countries name
+    .map((country, i) => {
+      const name = country.name;
+      const formattedName = formatName(name);
+      const image = country.flag;
+      const favoBorderStyle = getBorderStyle(name);
 
-    return (
-      <TouchableOpacity
-        key={i}
-        style={[styles.countryCard, favoBorderStyle]}
-        onPress={() => fetchCountryData(name)}
-      >
-        <Text style={styles.countryName}>{formattedName}</Text>
-        <Image style={styles.countryFlag} source={{ uri: image }}></Image>
-      </TouchableOpacity>
-    );
-  });
+      return (
+        <TouchableOpacity
+          key={i}
+          style={[styles.countryCard, favoBorderStyle]}
+          onPress={() => fetchCountryData(name)}
+        >
+          <Text style={styles.countryName}>{formattedName}</Text>
+          <Image style={styles.countryFlag} source={{ uri: image }}></Image>
+        </TouchableOpacity>
+      );
+    });
 
   // Fetch country by name
   const handleSubmit = async (country) => {
     try {
       if (!inputValue || !inputValue.trim()) {
-        setIsError(true);
-        return;
+        setError('Empty field, please enter a country name.');
       }
       const data = await getJSON(
         `https://restcountries.com/v3.1/name/${country}`
@@ -157,7 +155,7 @@ export default function HomeScreen() {
       });
       setSeekedCountry(formattedData);
       setInputValue('');
-      setIsError(false);
+      setError('');
     } catch (error) {
       console.error(error.message);
     }
@@ -207,9 +205,7 @@ export default function HomeScreen() {
           Search
         </Text>
       </TouchableOpacity>
-      {isError && (
-        <Text style={styles.errorText}>Please Enter a Valid Country ❌</Text>
-      )}
+      {error && <Text style={styles.errorText}>{error}</Text>}
       {seekedCountry.length !== 0 && (
         <TouchableOpacity style={styles.inputButton}>
           <Text style={styles.inputText} onPress={() => handleReset()}>
@@ -227,8 +223,6 @@ export default function HomeScreen() {
     </SafeAreaView>
   );
 }
-
-const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
@@ -319,23 +313,20 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     marginTop: 35,
+    width: 170,
   },
   inputButton: {
     backgroundColor: '#e2e6e2',
-    padding: 10,
+
     borderRadius: 5,
     marginTop: 10,
   },
-  inputText: {},
+  inputText: {
+    padding: 10,
+  },
   errorText: {
     marginTop: 3,
-    color: '#000',
+    color: 'red',
     fontSize: 17,
-    textShadowColor: 'red',
-    textShadowRadius: 3,
-    textShadowOffset: {
-      width: 2,
-      height: 1,
-    },
   },
 });
