@@ -1,4 +1,10 @@
-import { Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
+import {
+  Text,
+  StyleSheet,
+  ScrollView,
+  SafeAreaView,
+  Dimensions,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import FavoriteCard from '../components/FavoriteCard';
 import { useSelector } from 'react-redux';
@@ -13,13 +19,16 @@ export default function FavoritesScreen() {
     return <FavoriteCard key={i} {...data} isFavorite={isFavorite} />;
   });
 
+  const { width, height } = Dimensions.get('window');
+  const scale = Math.min(width / 375, height / 812);
+
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
         colors={['rgb(74,98,92)', 'rgb(18,25,22)']}
         style={styles.background}
       />
-      <Text style={styles.title}>Geopedia</Text>
+      <Text style={[styles.title, { fontSize: 40 * scale }]}>Geopedia</Text>
 
       <ScrollView
         style={styles.scrollView}
@@ -28,7 +37,14 @@ export default function FavoritesScreen() {
         {favorites.length > 0 ? (
           countries
         ) : (
-          <Text style={styles.infoText}>No favorites countries yet 😀 !</Text>
+          <Text
+            style={[
+              styles.infoText,
+              { marginTop: '60%', fontSize: 25 * scale },
+            ]}
+          >
+            No favorites countries yet 😀 !
+          </Text>
         )}
       </ScrollView>
     </SafeAreaView>
@@ -50,7 +66,6 @@ const styles = StyleSheet.create({
     height: '200%',
   },
   title: {
-    fontSize: 40,
     fontFamily: 'Ubuntu_400Regular',
     color: '#6aaf92',
     shadowColor: '#7C5F6B',
@@ -70,7 +85,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   infoText: {
-    marginTop: '60%',
     fontSize: 25,
     fontFamily: 'Ubuntu_400Regular',
     color: '#95e5c4',

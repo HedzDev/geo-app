@@ -45,28 +45,43 @@ export default function PressedCountry(props) {
     heartIcon = 'heart-o';
   }
 
+  const { width, height } = Dimensions.get('window');
+  const flagWidth = width / 2;
+  const flagHeight = height / 5;
+  const titleFontSize = width / 12;
+  const textFontSize = width / 23;
+  const infoBlockWidth = width / 1.5;
+
   return (
     <View style={styles.pressedCountryCard}>
-      <Image source={{ uri: flag }} style={styles.pressedCountryFlag} />
-      <Text style={styles.pressedCountryTitle}>{name}</Text>
+      <Image
+        source={{ uri: flag }}
+        style={[
+          styles.pressedCountryFlag,
+          { width: flagWidth, height: flagHeight },
+        ]}
+      />
+      <Text style={[styles.pressedCountryTitle, { fontSize: titleFontSize }]}>
+        {name}
+      </Text>
       <Text style={styles.pressedCountryOfficial}>{official}</Text>
-      <View style={styles.pressedCountryInfoBlock}>
-        <Text style={styles.pressedCountryText}>
+      <View style={[styles.pressedCountryInfoBlock, { width: infoBlockWidth }]}>
+        <Text style={[styles.pressedCountryText, { fontSize: textFontSize }]}>
           Capital : <Text style={styles.insideText}>{capital}</Text>
         </Text>
-        <Text style={styles.pressedCountryText}>
+        <Text style={[styles.pressedCountryText, { fontSize: textFontSize }]}>
           Area : <Text style={styles.insideText}>{area} km²</Text>
         </Text>
-        <Text style={styles.pressedCountryText}>
+        <Text style={[styles.pressedCountryText, { fontSize: textFontSize }]}>
           Continent : <Text style={styles.insideText}>{continent}</Text>
         </Text>
-        <Text style={styles.pressedCountryText}>
+        <Text style={[styles.pressedCountryText, { fontSize: textFontSize }]}>
           💰 <Text style={styles.insideText}>{currency}</Text>
         </Text>
-        <Text style={styles.pressedCountryText}>
+        <Text style={[styles.pressedCountryText, { fontSize: textFontSize }]}>
           🗣️ <Text style={styles.insideText}>{language}</Text>
         </Text>
-        <Text style={styles.pressedCountryText}>
+        <Text style={[styles.pressedCountryText, { fontSize: textFontSize }]}>
           👫{' '}
           <Text style={styles.insideText}>
             {(+population / 1000000).toFixed(2)}
@@ -82,8 +97,6 @@ export default function PressedCountry(props) {
   );
 }
 
-const { width, height } = Dimensions.get('window');
-
 const styles = StyleSheet.create({
   scrollView: {
     marginTop: 130,
@@ -98,25 +111,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   pressedCountryFlag: {
-    width: width / 2,
-    height: height / 5,
     marginBottom: 20,
     borderWidth: 1 / 3,
   },
   pressedCountryTitle: {
-    fontSize: 40,
     textAlign: 'center',
     fontFamily: 'Ubuntu_400Regular',
   },
   pressedCountryText: {
-    fontSize: width / 23,
     marginTop: 5,
     fontFamily: 'Ubuntu_400Regular',
   },
   pressedCountryInfoBlock: {
     marginTop: 20,
-    width: width / 1.5,
-    heigth: height / 3,
+    heigth: 'auto',
   },
   insideText: {
     fontWeight: 'bold',
