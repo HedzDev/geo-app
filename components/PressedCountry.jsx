@@ -81,13 +81,19 @@ export default function PressedCountry(props) {
         <Text style={[styles.pressedCountryText, { fontSize: textFontSize }]}>
           🗣️ <Text style={styles.insideText}>{language}</Text>
         </Text>
-        <Text style={[styles.pressedCountryText, { fontSize: textFontSize }]}>
-          👫{' '}
-          <Text style={styles.insideText}>
-            {(+population / 1000000).toFixed(2)}
-          </Text>{' '}
-          million(s) people
-        </Text>
+        {population < 1000000 ? (
+          <Text style={[styles.pressedCountryText, { fontSize: textFontSize }]}>
+            👫 <Text style={styles.insideText}>{population}</Text> inhabitants
+          </Text>
+        ) : (
+          <Text style={[styles.pressedCountryText, { fontSize: textFontSize }]}>
+            👫{' '}
+            <Text style={styles.insideText}>
+              {(+population / 1000000).toFixed(2)}
+            </Text>{' '}
+            million(s) inhabitants
+          </Text>
+        )}
       </View>
       <TouchableOpacity onPress={() => handleFavorite(props)}>
         <FontAwesomeIcon name={heartIcon} size={40} style={styles.like} />
