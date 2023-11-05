@@ -8,10 +8,12 @@ import {
   Modal,
   TouchableOpacity,
   TextInput,
+  Dimensions,
 } from 'react-native';
 import PressedCountry from '../components/PressedCountry';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
+import { getJSON } from '../utils/getJSON';
 import { useSelector } from 'react-redux';
 
 export default function HomeScreen() {
@@ -23,13 +25,6 @@ export default function HomeScreen() {
   const [inputValue, setInputValue] = useState('');
   const [isError, setIsError] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
-
-  // Function who fetch API and converts data to JSON
-  const getJSON = async (url, errorMsg = 'Something went wrong...') => {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(errorMsg);
-    return await res.json();
-  };
 
   // Fetching ALL restCountries API's countries
   useEffect(() => {
@@ -101,10 +96,6 @@ export default function HomeScreen() {
     setIsLiked(false);
   };
 
-  const formatName = (name) => {
-    return name.length > 15 ? name.slice(0, 15) + '...' : name;
-  };
-
   const getBorderStyle = (name) => {
     if (favorites.some((el) => name === el.name)) {
       return {
@@ -118,6 +109,10 @@ export default function HomeScreen() {
       };
     }
     return {};
+  };
+
+  const formatName = (name) => {
+    return name.length > 15 ? name.slice(0, 15) + '...' : name;
   };
 
   // Displaying all the countries or seeked country
@@ -152,9 +147,6 @@ export default function HomeScreen() {
         `https://restcountries.com/v3.1/name/${country}`
       );
 
-      if (!data) {
-        return;
-      }
       const formattedData = data.map((country) => {
         const name = country.name.common;
         const flag = country.flags.png;
@@ -235,6 +227,8 @@ export default function HomeScreen() {
     </SafeAreaView>
   );
 }
+
+const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {

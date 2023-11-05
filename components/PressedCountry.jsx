@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import { addFavorite, removeFavorite } from '../reducers/favorites';
 import { useDispatch, useSelector } from 'react-redux';
@@ -75,6 +82,8 @@ export default function PressedCountry(props) {
   );
 }
 
+const { width, height } = Dimensions.get('window');
+
 const styles = StyleSheet.create({
   scrollView: {
     marginTop: 130,
@@ -89,9 +98,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   pressedCountryFlag: {
-    width: 300,
-    height: 180,
-    marginBottom: 30,
+    width: width / 2,
+    height: height / 5,
+    marginBottom: 20,
     borderWidth: 1 / 3,
   },
   pressedCountryTitle: {
@@ -100,12 +109,14 @@ const styles = StyleSheet.create({
     fontFamily: 'Ubuntu_400Regular',
   },
   pressedCountryText: {
-    fontSize: 20,
-    marginVertical: 5,
+    fontSize: width / 23,
+    marginTop: 5,
     fontFamily: 'Ubuntu_400Regular',
   },
   pressedCountryInfoBlock: {
-    marginTop: 60,
+    marginTop: 20,
+    width: width / 1.5,
+    heigth: height / 3,
   },
   insideText: {
     fontWeight: 'bold',
@@ -118,11 +129,11 @@ const styles = StyleSheet.create({
   },
   like: {
     color: 'red',
-    marginTop: 45,
+    marginTop: 10,
   },
   likeText: {
     textAlign: 'center',
-    marginTop: 19,
+    marginTop: 9,
     fontSize: 20,
     fontFamily: 'Ubuntu_400Regular',
   },
