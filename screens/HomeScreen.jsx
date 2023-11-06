@@ -140,7 +140,22 @@ export default function HomeScreen() {
     try {
       if (!inputValue || !inputValue.trim()) {
         setError('Empty field, please enter a country name.');
+        return;
       }
+
+      // Checking if country name exists
+      let find = false;
+      allCountries.forEach((countryEl) => {
+        if (countryEl.name === country) {
+          find = true;
+        }
+      });
+      if (!find) {
+        setError('Invalid country name, please enter a valid name');
+        setInputValue('');
+        return;
+      }
+
       const data = await getJSON(
         `https://restcountries.com/v3.1/name/${country}`
       );
